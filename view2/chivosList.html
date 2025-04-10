@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Chivos - Panel Principal</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+
+    .btn-group {
+      margin: 20px 0;
+    }
+
+    button {
+      margin-right: 10px;
+      padding: 10px 15px;
+      border: none;
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .chivo {
+      background-color: white;
+      padding: 10px;
+      border-radius: 6px;
+      box-shadow: 0 0 5px #ccc;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1 id="mensaje">Cargando...</h1>
+
+  <div class="btn-group">
+    <button onclick="verSalud()">Ver Salud</button>
+    <button onclick="verEmbarazadas()">Ver Gestantes</button>
+    <button onclick="verEstadisticas()">Ver Estadísticas</button>
+  </div>
+
+  <div id="listaChivos"></div>
+
+  <script>
+    const nombre = localStorage.getItem('nombre');
+    const usuario = localStorage.getItem('usuario');
+    const rol = localStorage.getItem('rol');
+    const mensaje = document.getElementById('mensaje');
+
+    if (nombre && usuario && rol) {
+      mensaje.innerText = `Bienvenido ${nombre} (@${usuario}), tu rol es: ${rol}`;
+    } else {
+      mensaje.innerText = 'No hay sesión iniciada. Vuelve a iniciar sesión.';
+    }
+
+    let chivos = [];
+
+    async function cargarChivos() {
+      try {
+        const res = await fetch('/cargarChivos'); //IMPORTATNE
+        chivos = await res.json();
+        mostrarChivos(chivos);
+      } catch (err) {
+        console.error('Error al cargar chivos:', err);
+      }
+    }
+
+    function mostrarChivos(lista) {
+      const contenedor = document.getElementById('listaChivos');
+      contenedor.innerHTML = '';
+      lista.forEach(chivo => {
+        contenedor.innerHTML += `
+          <div class="chivo">
+            <strong>${chivo.nombre}</strong> (${chivo.codigo})<br>
+            Salud: ${chivo.salud} | Gestante: ${chivo.gestante ? 'Sí' : 'No'} | Peso: ${chivo.peso}kg
+          </div>
+        `;
+      });
+    }
+
+    function verSalud() {
+      mostrarChivos(chivos.filter(c => c.salud !== 'muerto'));
+    }
+
+    function verEmbarazadas() {
+      mostrarChivos(chivos.filter(c => c.gestante));
+    }
+
+    function verEstadisticas() {
+      const total = chivos.length;
+      const sanos = chivos.filter(c => c.salud === 'sano').length;
+      const enfermos = chivos.filter(c => c.salud === 'enfermo').length;
+      const gestantes = chivos.filter(c => c.gestante).length;
+
+      alert(`🐐 Total: ${total}\n✅ Sanos: ${sanos}\n🤒 Enfermos: ${enfermos}\n🤰 Gestantes: ${gestantes}`);
+    }
+
+    cargarChivos(); // Inicial
+  </script>
+
+</body>
+
+</html>
