@@ -17,7 +17,7 @@ dotenv.config();
 
 const uri = 'mongodb+srv://nuncho:nuncho12@cluster0.g63qsew.mongodb.net/fincaFacil?retryWrites=true&w=majority&appName=Cluster0';
 
-app.use(express.static(path.join(__dirname, '../view')));
+app.use(express.static(path.join(__dirname, 'view/')));
 
 app.use(express.json());
 
@@ -32,7 +32,7 @@ mongoose.connect(uri)
 
     // Sirve login.html cuando el usuario entra a "/"
     app.get('/', (req, res) => {
-      res.sendFile(path.join(__dirname, '../view/login.html'));
+      res.sendFile(path.join(__dirname, 'view/login.html'));
     });
 
     app.listen(PORT, () => {
