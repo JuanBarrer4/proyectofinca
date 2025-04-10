@@ -1,67 +1,156 @@
-<!-- view/login.html -->
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
   <meta charset="UTF-8">
-  <title>Iniciar sesión</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar Sesión</title>
+  <link rel="icon" href="logo.png" type="image/png">
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f2f2f2;
-      display: flex;
+      font-family: 'Arial', sans-serif;
+      background: url('imagenLogin.jpg') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
       height: 100vh;
+      display: flex;
       align-items: center;
       justify-content: center;
     }
 
     .login-container {
-      background: white;
-      padding: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.95);
+      padding: 2.5rem;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 400px;
+      animation: fadeIn 1s ease-in-out;
+      text-align: center;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     h2 {
-      text-align: center;
-      margin-bottom: 1rem;
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 1.5rem;
     }
 
     input {
       width: 100%;
-      padding: 0.5rem;
-      margin: 0.5rem 0;
+      padding: 0.8rem;
+      margin: 0.8rem 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    input:focus {
+      border-color: #4CAF50;
+      box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+      outline: none;
     }
 
     button {
       width: 100%;
-      padding: 0.5rem;
+      padding: 0.8rem;
       background: #4CAF50;
       color: white;
       border: none;
+      border-radius: 5px;
+      font-size: 1rem;
       cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      background: #45a049;
+      transform: scale(1.05);
     }
 
     #mensaje {
       margin-top: 1rem;
-      text-align: center;
+      font-size: 0.9rem;
+      color: red;
+      display: none;
+    }
+
+    .logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .logo img {
+      width: 120px;
+      height: auto;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .register-link {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #007bff;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .register-link:hover {
+      color: #0056b3;
+      text-decoration: underline;
+    }
+
+    .footer {
+      margin-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #aaa;
     }
   </style>
 </head>
 
 <body>
   <div class="login-container">
+    <div class="logo">
+      <img src="logo.png" alt="Logo Casa de la Cabra">
+    </div>
     <h2>Iniciar Sesión</h2>
     <input type="text" id="usuario" placeholder="Usuario" />
     <input type="password" id="contraseña" placeholder="Contraseña" />
     <button onclick="iniciarSesion()">Entrar</button>
     <div id="mensaje"></div>
+    <a href="#" class="register-link">¿No tienes cuenta? Regístrate aquí</a>
+    <div class="footer">© 2025 Casa de la Cabra. Todos los derechos reservados.</div>
   </div>
 
   <script>
     async function iniciarSesion() {
       const usuario = document.getElementById('usuario').value;
       const contraseña = document.getElementById('contraseña').value;
+      const mensajeDiv = document.getElementById('mensaje');
 
       try {
         const res = await fetch('/api/login', {
@@ -71,37 +160,26 @@
         });
 
         const data = await res.json();
-        const mensajeDiv = document.getElementById('mensaje');
 
         if (res.ok) {
-          // Guardar datos en localStorage
+          // Guardar datos del usuario en localStorage (opcional)
           localStorage.setItem('usuario', data.usuario);
           localStorage.setItem('nombre', data.nombre);
           localStorage.setItem('rol', data.rol);
 
-          console.log('Guardado en localStorage:');
-          console.log('usuario:', localStorage.getItem('usuario'));
-          console.log('nombre:', localStorage.getItem('nombre'));
-          console.log('rol:', localStorage.getItem('rol'));
-
-
-          // Redirigir al nuevo puerto
-
-          setTimeout(() => {
-            window.location.href = '/chivosList.html';
-            //window.location.href = 'http://localhost:8081/chivosList.html';
-          }, 200); // 200 milisegundos
-
+          // Redirigir al dashboard
+          window.location.href = '/chivosList.html';
         } else {
-          mensajeDiv.innerHTML = `<span style="color:red;">${data.mensaje}</span>`;
+          mensajeDiv.textContent = data.mensaje || 'Credenciales incorrectas. Por favor, inténtalo de nuevo.';
+          mensajeDiv.style.display = 'block';
         }
       } catch (error) {
         console.error('Error:', error);
-        document.getElementById('mensaje').innerText = 'Error al conectar con el servidor.';
+        mensajeDiv.textContent = 'Error al conectar con el servidor.';
+        mensajeDiv.style.display = 'block';
       }
     }
   </script>
-
 </body>
 
 </html>

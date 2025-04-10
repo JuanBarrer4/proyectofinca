@@ -6,17 +6,12 @@ export const welcome = (req, res) => {
 
 export const loginUser = async (req, res) => {
   const { usuario, contraseña } = req.body;
-   
 
   try {
     const user = await User.findOne({ usuario, contraseña });
 
     if (!user) {
       return res.status(401).json({ mensaje: 'Credenciales incorrectas' });
-    }
-
-    if ( user === null ) {
-      return res.status(401).json({ mensaje: 'Usuario no encontrado' });
     }
 
     res.json({
@@ -27,8 +22,6 @@ export const loginUser = async (req, res) => {
     });
 
   } catch (error) {
-    //console.error('Error en login:', error.message); //error de consola
-    res.status(500).json({ mensaje: 'Error del servidor', error: error.message }); 
+    res.status(500).json({ mensaje: 'Error del servidor', error: error.message });
   }
 };
-
