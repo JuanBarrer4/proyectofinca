@@ -15,7 +15,12 @@ const PORT = 8080;
 
 dotenv.config();
 
-app.use(express.static(path.join(__dirname, '../view')));
+//app.use(express.static(path.join(__dirname, '../view')));
+
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, '../view/login.html'));
+});
+
 
 app.use(express.json());
 
